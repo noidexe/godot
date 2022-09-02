@@ -67,6 +67,39 @@ bool SubViewportContainer::is_stretch_enabled() const {
 	return stretch;
 }
 
+void SubViewportContainer::set_size_override(Size2 p_size_override) {
+	ERR_FAIL_COND(p_size_override.x < 0 || p_size_override.y < 0);
+	if (size_override == p_size_override) {
+		return;
+	}
+	
+	size_override = p_size_override;
+
+		if (!stretch) {
+		return;
+	}
+
+	Size2 _size = get_size();
+	if ( size_override.x > 0 && size_override.y > 0) {
+		_size = size_override;
+	}
+
+	for (int i = 0; i < get_child_count(); i++) {
+		SubViewport *c = Object::cast_to<SubViewport>(get_child(i));
+		if (!c) {
+			continue;
+		}
+
+		c->set_size(_size / shrink);
+	}
+
+	queue_redraw();
+}
+
+Size2 SubViewportContainer::get_size_override() const {
+	return size_override;
+}
+
 void SubViewportContainer::set_stretch_shrink(int p_shrink) {
 	ERR_FAIL_COND(p_shrink < 1);
 	if (shrink == p_shrink) {
@@ -79,13 +112,18 @@ void SubViewportContainer::set_stretch_shrink(int p_shrink) {
 		return;
 	}
 
+	Size2 _size = get_size();
+	if ( size_override.x > 0 && size_override.y > 0) {
+		_size = size_override;
+	}
+
 	for (int i = 0; i < get_child_count(); i++) {
 		SubViewport *c = Object::cast_to<SubViewport>(get_child(i));
 		if (!c) {
 			continue;
 		}
 
-		c->set_size(get_size() / shrink);
+		c->set_size(_size / shrink);
 	}
 
 	queue_redraw();
@@ -110,13 +148,18 @@ void SubViewportContainer::_notification(int p_what) {
 				return;
 			}
 
+			Size2 _size = get_size();
+			if ( size_override.x > 0 && size_override.y > 0) {
+				_size = size_override;
+			}
+
 			for (int i = 0; i < get_child_count(); i++) {
 				SubViewport *c = Object::cast_to<SubViewport>(get_child(i));
 				if (!c) {
 					continue;
 				}
 
-				c->set_size(get_size() / shrink);
+				c->set_size(_size / shrink);
 			}
 		} break;
 
@@ -184,7 +227,11 @@ void SubViewportContainer::input(const Ref<InputEvent> &p_event) {
 
 	if (stretch) {
 		Transform2D scale_xf;
-		scale_xf.scale(Vector2(shrink, shrink));
+		Vector2 _override_ratio = Vector2(1.0, 1.0);
+		if (size_override.x > 0 && size_override.y > 0){
+			_override_ratio = get_size() / size_override;
+		}
+		scale_xf.scale(_override_ratio * shrink);
 		xform *= scale_xf;
 	}
 
@@ -245,12 +292,16 @@ TypedArray<String> SubViewportContainer::get_configuration_warnings() const {
 }
 
 void SubViewportContainer::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("set_size_override", "size"), &SubViewportContainer::set_size_override);
+	ClassDB::bind_method(D_METHOD("get_size_override"), &SubViewportContainer::get_size_override);
+
 	ClassDB::bind_method(D_METHOD("set_stretch", "enable"), &SubViewportContainer::set_stretch);
 	ClassDB::bind_method(D_METHOD("is_stretch_enabled"), &SubViewportContainer::is_stretch_enabled);
 
 	ClassDB::bind_method(D_METHOD("set_stretch_shrink", "amount"), &SubViewportContainer::set_stretch_shrink);
 	ClassDB::bind_method(D_METHOD("get_stretch_shrink"), &SubViewportContainer::get_stretch_shrink);
 
+	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2I, "size_override"), "set_size_override", "get_size_override");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "stretch"), "set_stretch", "is_stretch_enabled");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "stretch_shrink"), "set_stretch_shrink", "get_stretch_shrink");
 }

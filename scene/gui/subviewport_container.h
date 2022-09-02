@@ -36,6 +36,7 @@
 class SubViewportContainer : public Container {
 	GDCLASS(SubViewportContainer, Container);
 
+	Size2 size_override = Size2(0,0);
 	bool stretch = false;
 	int shrink = 1;
 	void _notify_viewports(int p_notification);
@@ -45,6 +46,9 @@ protected:
 	static void _bind_methods();
 
 public:
+	void set_size_override(Size2 p_size_override);
+	Size2 get_size_override() const;
+
 	void set_stretch(bool p_enable);
 	bool is_stretch_enabled() const;
 
