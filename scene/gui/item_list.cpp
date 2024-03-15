@@ -754,7 +754,8 @@ void ItemList::gui_input(const Ref<InputEvent> &p_event) {
 	}
 
 	if (p_event->is_pressed() && items.size() > 0) {
-		if (p_event->is_action("ui_up", true)) {
+		if (!was_ui_up_pressed && p_event->is_action("ui_up", true)) {
+			was_ui_up_pressed = true;
 			if (!search_string.is_empty()) {
 				uint64_t now = OS::get_singleton()->get_ticks_msec();
 				uint64_t diff = now - search_time_msec;
@@ -792,7 +793,8 @@ void ItemList::gui_input(const Ref<InputEvent> &p_event) {
 				}
 				accept_event();
 			}
-		} else if (p_event->is_action("ui_down", true)) {
+		} else if (!was_ui_down_pressed && p_event->is_action("ui_down", true)) {
+			was_ui_down_pressed = true;
 			if (!search_string.is_empty()) {
 				uint64_t now = OS::get_singleton()->get_ticks_msec();
 				uint64_t diff = now - search_time_msec;
@@ -860,7 +862,8 @@ void ItemList::gui_input(const Ref<InputEvent> &p_event) {
 					break;
 				}
 			}
-		} else if (p_event->is_action("ui_left", true)) {
+		} else if (!was_ui_left_pressed && p_event->is_action("ui_left", true)) {
+			was_ui_left_pressed = true;
 			search_string = ""; //any mousepress cancels
 
 			if (current % current_columns != 0) {
@@ -880,7 +883,8 @@ void ItemList::gui_input(const Ref<InputEvent> &p_event) {
 				}
 				accept_event();
 			}
-		} else if (p_event->is_action("ui_right", true)) {
+		} else if (!was_ui_right_pressed && p_event->is_action("ui_right", true)) {
+			was_ui_right_pressed = true;
 			search_string = ""; //any mousepress cancels
 
 			if (current % current_columns != (current_columns - 1) && current + 1 < items.size()) {
@@ -958,6 +962,17 @@ void ItemList::gui_input(const Ref<InputEvent> &p_event) {
 					}
 				}
 			}
+		}
+
+	} else {
+		if(p_event->is_action("ui_up", true)) {
+			was_ui_up_pressed = false;
+		} else if(p_event->is_action("ui_down", true)) {
+			was_ui_down_pressed = false;
+		} else if(p_event->is_action("ui_left", true)) {
+			was_ui_left_pressed = false;
+		} else if(p_event->is_action("ui_right", true)) {
+			was_ui_right_pressed = false;
 		}
 	}
 

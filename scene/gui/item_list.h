@@ -102,6 +102,11 @@ private:
 	bool auto_height = false;
 	float auto_height_value = 0.0;
 
+	bool was_ui_up_pressed = false;
+	bool was_ui_down_pressed = false;
+	bool was_ui_left_pressed = false;
+	bool was_ui_right_pressed = false;
+
 	Vector<Item> items;
 	Vector<int> separators;
 
