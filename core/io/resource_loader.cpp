@@ -156,6 +156,7 @@ Ref<Resource> ResourceFormatLoader::load(const String &p_path, const String &p_o
 			if (r_error) {
 				*r_error = OK;
 			}
+			Ref<Resource>(res)->notification(Resource::NOTIFICATION_DESERIALIZED);
 			return res;
 		}
 	}

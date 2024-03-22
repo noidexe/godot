@@ -1221,6 +1221,7 @@ Ref<Resource> ResourceFormatLoaderBinary::load(const String &p_path, const Strin
 	if (err) {
 		return Ref<Resource>();
 	}
+	loader.resource->notification(Resource::NOTIFICATION_DESERIALIZED);
 	return loader.resource;
 }
 

@@ -1683,6 +1683,7 @@ Ref<Resource> ResourceFormatLoaderText::load(const String &p_path, const String 
 		*r_error = err;
 	}
 	if (err == OK) {
+		loader.get_resource()->notification(Resource::NOTIFICATION_DESERIALIZED);
 		return loader.get_resource();
 	} else {
 		return Ref<Resource>();
