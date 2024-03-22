@@ -127,7 +127,6 @@ public:
 		NOTIFICATION_DESERIALIZED = 4,
 	};
 
-
 #ifdef TOOLS_ENABLED
 
 	virtual uint32_t hash_edited_version_for_preview() const;
