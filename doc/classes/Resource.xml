@@ -124,4 +124,9 @@
 			</description>
 		</signal>
 	</signals>
+	<constants>
+		<constant name="NOTIFICATION_DESERIALIZED" value="4">
+			Notification received when the resource has been fully deserialized. Exported properties will have the values defined in the resource file at this point.
+		</constant>
+	</constants>
 </class>
