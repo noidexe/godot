@@ -1378,6 +1378,24 @@ void AnimatedSprite3D::pause() {
 	_stop_internal(false);
 }
 
+void AnimatedSprite3D::resume() {
+	ERR_FAIL_COND_MSG(frames.is_null(), "There is no SpriteFrames resource assigned to sprite_frames");
+	ERR_FAIL_COND_MSG(!frames->get_animation_names().has(animation), vformat("There is no animation with name '%s'.", animation));
+
+	int end_frame = MAX(0, frames->get_frame_count(animation) - 1);
+	bool is_backward = signbit(speed_scale * custom_speed_scale);
+
+	bool is_finished = (is_backward && frame == 0 && frame_progress <= 0.0) || (!is_backward && frame == end_frame && frame_progress >= 1.0);
+
+	// If the animation has finished there's nothing else to play and calling play() would restart it
+	if (is_finished) {
+		return;
+	}
+
+	// resume animation with the same settings
+	play(animation, custom_speed_scale);
+}
+
 void AnimatedSprite3D::stop() {
 	_stop_internal(true);
 }
@@ -1480,6 +1498,7 @@ void AnimatedSprite3D::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("play", "name", "custom_speed", "from_end"), &AnimatedSprite3D::play, DEFVAL(StringName()), DEFVAL(1.0), DEFVAL(false));
 	ClassDB::bind_method(D_METHOD("play_backwards", "name"), &AnimatedSprite3D::play_backwards, DEFVAL(StringName()));
 	ClassDB::bind_method(D_METHOD("pause"), &AnimatedSprite3D::pause);
+	ClassDB::bind_method(D_METHOD("resume"), &AnimatedSprite3D::resume);
 	ClassDB::bind_method(D_METHOD("stop"), &AnimatedSprite3D::stop);
 
 	ClassDB::bind_method(D_METHOD("set_frame", "frame"), &AnimatedSprite3D::set_frame);

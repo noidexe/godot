@@ -48,6 +48,15 @@
 				This method is a shorthand for [method play] with [code]custom_speed = -1.0[/code] and [code]from_end = true[/code], so see its description for more information.
 			</description>
 		</method>
+		<method name="resume">
+			<return type="void" />
+			<description>
+				Resumes playing an animation.
+				It has two main differences compared to calling [method play] with no arguments:
+				- It will restart the animation in the same direction and with the same custom speed as before pausing.
+				- If the animation has finished playing this will not cause it to start again.
+			</description>
+		</method>
 		<method name="set_frame_and_progress">
 			<return type="void" />
 			<param index="0" name="frame" type="int" />

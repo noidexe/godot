@@ -91,6 +91,7 @@ public:
 	void play(const StringName &p_name = StringName(), float p_custom_scale = 1.0, bool p_from_end = false);
 	void play_backwards(const StringName &p_name = StringName());
 	void pause();
+	void resume();
 	void stop();
 
 	bool is_playing() const;
